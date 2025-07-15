@@ -1,4 +1,4 @@
-// routes/chat.js
+
 import express from "express";
 import Thread from "../models/Thread.js";
 import getGeminiResponse from "../utils/getGeminiResponse.js";

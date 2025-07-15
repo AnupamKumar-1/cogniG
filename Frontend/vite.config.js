@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // PROXY ANY /auth/* PATH to your Express server
       '^/auth/.*': {
-        target: 'http://localhost:8080',
+        target: 'https://cognig-backend.onrender.com',
         changeOrigin: true,
         secure: false,
         // no rewrite: we want to forward /auth/me → /auth/me on backend
