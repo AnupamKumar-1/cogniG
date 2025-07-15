@@ -47,7 +47,7 @@ router.get(
     // Stamp session createdAt on first login
     req.session.createdAt = Date.now();
 
-    res.redirect("https://cognig.onrender.com/?login=success");
+    res.redirect("https://cognig-backend.onrender.com/?login=success");
   }
 );
 
@@ -70,7 +70,6 @@ router.get("/logout", (req, res, next) => {
         secure: true       // must be HTTPS
       });
 
-      // Tell client “logout succeeded”
       res.status(200).json({ success: true });
     });
   });
