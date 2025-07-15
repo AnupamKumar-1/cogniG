@@ -1,4 +1,4 @@
-// Frontend/src/components/LoginModal.jsx
+
 import React from "react";
 import "./LoginModal.css";
 
@@ -7,9 +7,9 @@ export default function LoginModal({ isOpen, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2>Login to Start Learning</h2>
+        <h2>Login to Start Exploring</h2>
         <a
-          href="http://localhost:8080/auth/github"
+          href="https://cognig-backend.onrender.com/auth/github"
           className="btn btn-github"
         >
           <img
