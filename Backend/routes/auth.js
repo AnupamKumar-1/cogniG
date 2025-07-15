@@ -47,7 +47,7 @@ router.get(
     // Stamp session createdAt on first login
     req.session.createdAt = Date.now();
 
-    res.redirect("https://cognig-backend.onrender.com/?login=success");
+    res.redirect("https://cognig.onrender.com/?login=success");
   }
 );
 
