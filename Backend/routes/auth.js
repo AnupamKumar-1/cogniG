@@ -64,7 +64,6 @@ router.get("/logout", (req, res, next) => {
         return res.status(500).json({ error: "Could not destroy session" });
       }
 
-      // Clear the cookie — match your session() cookie options
       res.clearCookie("sessionId", {
         httpOnly: true,
         sameSite: "none",  // allow cross-site

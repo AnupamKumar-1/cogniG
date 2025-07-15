@@ -26,7 +26,7 @@ function ChatWindow() {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/chat", options);
+            const response = await fetch("https://cognig-backend.onrender.com/api/chat", options);
             const res = await response.json();
             console.log(res);
             setReply(res.reply);
@@ -60,7 +60,7 @@ function ChatWindow() {
 
     async function handleLogout() {
   try {
-    const res = await fetch("http://localhost:8080/auth/logout", {
+    const res = await fetch("https://cognig-backend.onrender.com/auth/logout", {
       method: "GET",
       credentials: "include",
     });
