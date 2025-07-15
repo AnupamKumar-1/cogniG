@@ -3,7 +3,9 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
+
 import chatRoutes from "./routes/chat.js";
+import authRoutes from "./routes/auth.js";
 
 dotenv.config();
 
@@ -13,9 +15,16 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
-app.use(cors());
 
-// Mount all /api routes (history + chat)
+ app.use(
+   cors({
+     origin: "http://localhost:5173",
+     credentials: true
+   })
+ );
+
+app.use("/auth", authRoutes);
+// Mount all /api routes (history  chat)
 app.use("/api", chatRoutes);
 
 app.listen(PORT, () => {

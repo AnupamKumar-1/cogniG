@@ -1,0 +1,57 @@
+/* Frontend/src/components/LoginModal.css */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    position: relative;
+    background: #111;
+    color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.modal h2 {
+    margin-bottom: 1rem;
+}
+
+.btn-github {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #24292e;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.github-logo {
+    width: 20px;
+    margin-right: 8px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.5rem;
+    cursor: pointer;
+}

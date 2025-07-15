@@ -26,7 +26,7 @@ function ChatWindow() {
         };
 
         try {
-            const response = await fetch("https://cognig-backend.onrender.com/api/chat", options);
+            const response = await fetch("http://localhost:8080/api/chat", options);
             const res = await response.json();
             console.log(res);
             setReply(res.reply);
@@ -58,6 +58,22 @@ function ChatWindow() {
         setIsOpen(!isOpen);
     }
 
+    async function handleLogout() {
+  try {
+    const res = await fetch("http://localhost:8080/auth/logout", {
+      method: "GET",
+      credentials: "include",
+    });
+    if (res.ok) {
+      // client‐side redirect after server confirms logout
+      window.location.href = "/";
+    } else {
+      console.error("Logout failed:", await res.text());
+    }
+  } catch (err) {
+    console.error("Network or CORS error on logout:", err);
+  }
+}
     return (
         <div className="chatWindow">
             <div className="navbar">
@@ -69,9 +85,11 @@ function ChatWindow() {
             {
                 isOpen && 
                 <div className="dropDown">
-                    <div className="dropDownItem"><i class="fa-solid fa-gear"></i> Settings</div>
-                    <div className="dropDownItem"><i class="fa-solid fa-cloud-arrow-up"></i> Upgrade plan</div>
-                    <div className="dropDownItem"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</div>
+                    <div className="dropDownItem"><i className="fa-solid fa-gear"></i> Settings</div>
+                    <div className="dropDownItem"><i className="fa-solid fa-cloud-arrow-up"></i> Upgrade plan</div>
+                    <div className="dropDownItem" onClick={handleLogout}>
+  <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
+</div>
                 </div>
             }
             <Chat></Chat>

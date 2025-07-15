@@ -39,7 +39,7 @@ function Chat() {
                     prevChats?.slice(0, -1).map((chat, idx) => 
                         <div className={chat.role === "user"? "userDiv" : "gptDiv"} key={idx}>
                             {
-                                chat.role === "user"? 
+                                chat.role === "user"?
                                 <p className="userMessage">{chat.content}</p> : 
                                 <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{chat.content}</ReactMarkdown>
                             }
