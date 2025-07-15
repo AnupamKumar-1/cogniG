@@ -5,7 +5,7 @@ import session from "express-session";
 const router = express.Router();
 const passport = configurePassport();
 
-// 1) set up sessions and passport middleware
+
 router.use(
   session({
     name: "sessionId",
@@ -14,7 +14,7 @@ router.use(
     saveUninitialized: false,
     cookie: {
       path: "/",
-      secure: false,       // set to true in production with HTTPS
+      secure: true,       // set to true in production with HTTPS
       httpOnly: true,
       sameSite: "lax",
       maxAge: 1000 * 60 * 60 * 24  // 24 hours
@@ -47,7 +47,7 @@ router.get(
     // Stamp session createdAt on first login
     req.session.createdAt = Date.now();
 
-    res.redirect(process.env.FRONTEND_URL + "/?login=success");
+    res.redirect("https://cognig.onrender.com/?login=success");
   }
 );
 
