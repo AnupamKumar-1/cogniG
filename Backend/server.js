@@ -28,6 +28,15 @@ app.use(
 app.use("/auth", authRoutes);
 app.use("/api", chatRoutes);
 
+// Global catch-all error handler (must come *after* all routes)
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({
+    error: "Internal Server Error",
+    details: err.message || String(err)
+  });
+});
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected with Database!"))
