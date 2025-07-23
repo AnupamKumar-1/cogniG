@@ -5,16 +5,21 @@ import { ensureAuthenticated } from "./auth.js";
 
 const router = express.Router();
 
+// List threads for the logged‑in user
 router.get("/thread", ensureAuthenticated, async (req, res) => {
   try {
     const threads = await Thread.find({ author: req.user._id }).sort({ updatedAt: -1 });
     return res.json(threads);
   } catch (err) {
     console.error("Error in GET /api/thread:", err);
-    return res.status(500).json({ error: "Failed to fetch threads", details: err.message });
+    return res.status(500).json({
+      error: "Failed to fetch threads",
+      details: err.message
+    });
   }
 });
 
+// Get messages in one thread (if owned)
 router.get("/thread/:threadId", ensureAuthenticated, async (req, res) => {
   try {
     const thread = await Thread.findOne({
@@ -27,10 +32,14 @@ router.get("/thread/:threadId", ensureAuthenticated, async (req, res) => {
     return res.json(thread.messages);
   } catch (err) {
     console.error("Error in GET /api/thread/:threadId:", err);
-    return res.status(500).json({ error: "Failed to fetch chat", details: err.message });
+    return res.status(500).json({
+      error: "Failed to fetch chat",
+      details: err.message
+    });
   }
 });
 
+// Delete a thread
 router.delete("/thread/:threadId", ensureAuthenticated, async (req, res) => {
   try {
     const deleted = await Thread.findOneAndDelete({
@@ -43,10 +52,14 @@ router.delete("/thread/:threadId", ensureAuthenticated, async (req, res) => {
     return res.json({ success: "Thread deleted successfully" });
   } catch (err) {
     console.error("Error in DELETE /api/thread/:threadId:", err);
-    return res.status(500).json({ error: "Failed to delete thread", details: err.message });
+    return res.status(500).json({
+      error: "Failed to delete thread",
+      details: err.message
+    });
   }
 });
 
+// Send or append chat messages
 router.post("/chat", ensureAuthenticated, async (req, res) => {
   const { threadId, message } = req.body;
   if (!threadId || !message) {
@@ -54,7 +67,6 @@ router.post("/chat", ensureAuthenticated, async (req, res) => {
   }
 
   try {
-    console.log("Chat by user:", req.user._id, "thread:", threadId);
     let thread = await Thread.findOne({ threadId, author: req.user._id });
     if (!thread) {
       thread = new Thread({

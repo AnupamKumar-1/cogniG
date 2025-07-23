@@ -20,10 +20,15 @@ function Sidebar() {
       const response = await fetch("https://cognig-backend.onrender.com/api/thread", {
         credentials: "include"
       });
-      const res = await response.json();
-      setAllThreads(res.map(t => ({ threadId: t.threadId, title: t.title })));
+      if (!response.ok) {
+        const err = await response.json();
+        console.error("Failed to load threads:", err);
+        return;
+      }
+      const threads = await response.json();
+      setAllThreads(threads.map(t => ({ threadId: t.threadId, title: t.title })));
     } catch (err) {
-      console.error(err);
+      console.error("Network error loading threads:", err);
     }
   };
 
@@ -46,12 +51,17 @@ function Sidebar() {
         `https://cognig-backend.onrender.com/api/thread/${newThreadId}`,
         { credentials: "include" }
       );
-      const res = await response.json();
-      setPrevChats(res);
+      if (!response.ok) {
+        const err = await response.json();
+        console.error("Failed to load chat:", err);
+        return;
+      }
+      const messages = await response.json();
+      setPrevChats(messages);
       setNewChat(false);
       setReply(null);
     } catch (err) {
-      console.error(err);
+      console.error("Network error loading chat:", err);
     }
   };
 
@@ -61,13 +71,16 @@ function Sidebar() {
         `https://cognig-backend.onrender.com/api/thread/${threadId}`,
         { method: "DELETE", credentials: "include" }
       );
-      const res = await response.json();
-      setAllThreads(prev => prev.filter(t => t.threadId !== threadId));
-      if (threadId === currThreadId) {
-        createNewChat();
+      if (!response.ok) {
+        const err = await response.json();
+        console.error("Failed to delete thread:", err);
+        return;
       }
+      await response.json();
+      setAllThreads(prev => prev.filter(t => t.threadId !== threadId));
+      if (threadId === currThreadId) createNewChat();
     } catch (err) {
-      console.error(err);
+      console.error("Network error deleting thread:", err);
     }
   };
 
