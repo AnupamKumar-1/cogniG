@@ -1,46 +1,22 @@
 import express from "express";
+import passport from "passport";          // now importing the singleton
 import configurePassport from "../config/passport.js";
-import session from "express-session";
 
 const router = express.Router();
-const passport = configurePassport();
+configurePassport();  // bootstraps passport strategies
 
-router.use(
-  session({
-    name: "sessionId",
-    secret: process.env.SESSION_SECRET || "keyboard cat",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      path: "/",
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24
-    }
-  })
-);
-
-router.use((req, res, next) => {
-  if (!req.session.createdAt) {
-    req.session.createdAt = Date.now();
-  }
-  next();
-});
-
-router.use(passport.initialize());
-router.use(passport.session());
-
+// Redirect user to GitHub for login
 router.get(
   "/github",
   passport.authenticate("github", { scope: ["user:email"] })
 );
 
+// GitHub will redirect to this URL after approval
 router.get(
   "/github/callback",
   passport.authenticate("github", { failureRedirect: "/" }),
   (req, res) => {
-    req.session.createdAt = Date.now();
+    // upon successful login, redirect back to your frontend
     res.redirect("https://cognig.onrender.com/?login=success");
   }
 );
@@ -63,27 +39,23 @@ router.get("/logout", (req, res, next) => {
   });
 });
 
+// Middleware to protect routes
 export function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.status(401).json({ error: "Not authenticated" });
 }
 
 router.get("/me", ensureAuthenticated, (req, res) => {
-  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  res.setHeader("Pragma", "no-cache");
-  res.setHeader("Expires", "0");
-
   const createdAt = req.session.createdAt || Date.now();
   const ageMs = Date.now() - createdAt;
   const maxAge = req.session.cookie.maxAge;
-  const ageSeconds = Math.floor(ageMs / 1000);
   const expiresInSeconds = Math.max(0, Math.floor((maxAge - ageMs) / 1000));
 
   res.json({
     user: req.user,
     session: {
       createdAt: new Date(createdAt).toISOString(),
-      ageSeconds,
+      ageSeconds: Math.floor(ageMs/1000),
       expiresInSeconds
     }
   });
