@@ -1,4 +1,4 @@
-// /Backend/config/passport.js
+
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 

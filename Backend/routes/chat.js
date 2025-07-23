@@ -5,7 +5,7 @@ import getGeminiResponse from "../utils/getGeminiResponse.js";
 
 const router = express.Router();
 
-// List all threads
+
 router.get("/thread", async (req, res) => {
   try {
     const threads = await Thread.find({}).sort({ updatedAt: -1 });
@@ -16,7 +16,7 @@ router.get("/thread", async (req, res) => {
   }
 });
 
-// Get a single thread’s messages
+
 router.get("/thread/:threadId", async (req, res) => {
   try {
     const thread = await Thread.findOne({ threadId: req.params.threadId });
@@ -28,7 +28,7 @@ router.get("/thread/:threadId", async (req, res) => {
   }
 });
 
-// Delete a thread
+
 router.delete("/thread/:threadId", async (req, res) => {
   try {
     const deleted = await Thread.findOneAndDelete({ threadId: req.params.threadId });
@@ -40,7 +40,7 @@ router.delete("/thread/:threadId", async (req, res) => {
   }
 });
 
-// Chat: append user message, call Gemini, save assistant reply
+
 router.post("/chat", async (req, res) => {
   const { threadId, message } = req.body;
   if (!threadId || !message) {

@@ -1,4 +1,3 @@
-// /Frontend/src/App.jsx
 import './App.css';
 import Sidebar from './Sidebar.jsx';
 import ChatWindow from './ChatWindow.jsx';
@@ -8,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { v1 as uuidv1 } from 'uuid';
 
 function App() {
-  // chat state
   const [prompt, setPrompt] = useState('');
   const [reply, setReply] = useState(null);
   const [currThreadId, setCurrThreadId] = useState(uuidv1());
@@ -16,23 +14,24 @@ function App() {
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
 
-  // auth state
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // on mount, verify session
   useEffect(() => {
-    fetch('/auth/me', {
-    credentials: 'include',
-    cache: 'no-store',
-  })
+    const params = new URLSearchParams(window.location.search);
+    const loginFlag = params.get('login');
+    if (loginFlag === 'success') {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    fetch('https://cognig-backend.onrender.com/auth/me', {
+      credentials: 'include',
+      cache: 'no-store',
+    })
       .then(res => res.json())
       .then(data => {
-        if (data.user) {
-          setUser(data.user);
-        } else {
-          setShowModal(true);
-        }
+        if (data.user) setUser(data.user);
+        else setShowModal(true);
       })
       .catch(() => setShowModal(true));
   }, []);
@@ -46,7 +45,6 @@ function App() {
     allThreads, setAllThreads
   };
 
-  // if not authenticated, show login modal
   if (!user) {
     return (
       <LoginModal
@@ -56,7 +54,6 @@ function App() {
     );
   }
 
-  // authenticated: show chat UI
   return (
     <div className='app'>
       <MyContext.Provider value={providerValues}>

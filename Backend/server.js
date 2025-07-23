@@ -1,4 +1,4 @@
-// server.js
+
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -24,7 +24,7 @@ app.use(express.json());
  );
 
 app.use("/auth", authRoutes);
-// Mount all /api routes (history  chat)
+
 app.use("/api", chatRoutes);
 
 app.listen(PORT, () => {
