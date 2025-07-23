@@ -1,15 +1,14 @@
+
 import express from "express";
 import Thread from "../models/Thread.js";
 import getGeminiResponse from "../utils/getGeminiResponse.js";
-import { ensureAuthenticated } from "./auth.js";
 
 const router = express.Router();
 
-router.use(ensureAuthenticated);
 
 router.get("/thread", async (req, res) => {
   try {
-    const threads = await Thread.find({ userId: req.user._id }).sort({ updatedAt: -1 });
+    const threads = await Thread.find({}).sort({ updatedAt: -1 });
     res.json(threads);
   } catch (err) {
     console.error(err);
@@ -17,9 +16,10 @@ router.get("/thread", async (req, res) => {
   }
 });
 
+
 router.get("/thread/:threadId", async (req, res) => {
   try {
-    const thread = await Thread.findOne({ threadId: req.params.threadId, userId: req.user._id });
+    const thread = await Thread.findOne({ threadId: req.params.threadId });
     if (!thread) return res.status(404).json({ error: "Thread not found" });
     res.json(thread.messages);
   } catch (err) {
@@ -28,16 +28,18 @@ router.get("/thread/:threadId", async (req, res) => {
   }
 });
 
+
 router.delete("/thread/:threadId", async (req, res) => {
   try {
-    const deleted = await Thread.findOneAndDelete({ threadId: req.params.threadId, userId: req.user._id });
-    if (!deleted) return res.status(404).json({ error: "Thread not found or not yours" });
+    const deleted = await Thread.findOneAndDelete({ threadId: req.params.threadId });
+    if (!deleted) return res.status(404).json({ error: "Thread not found" });
     res.json({ success: "Thread deleted successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to delete thread" });
   }
 });
+
 
 router.post("/chat", async (req, res) => {
   const { threadId, message } = req.body;
@@ -46,13 +48,12 @@ router.post("/chat", async (req, res) => {
   }
 
   try {
-    let thread = await Thread.findOne({ threadId, userId: req.user._id });
+    let thread = await Thread.findOne({ threadId });
     if (!thread) {
       thread = new Thread({
-        userId: req.user._id,
         threadId,
         title: message.length > 50 ? message.slice(0, 50) + "…" : message,
-        messages: [{ role: "user", content: message }]
+        messages: [{ role: "user", content: message }],
       });
     } else {
       thread.messages.push({ role: "user", content: message });

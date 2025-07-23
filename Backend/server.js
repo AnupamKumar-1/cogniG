@@ -8,31 +8,31 @@ import authRoutes from "./routes/auth.js";
 
 dotenv.config();
 
+console.log("GEMINI_API_KEY is", process.env.GEMINI_API_KEY ? "set" : "MISSING");
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.set('trust proxy', 1);
 app.use(express.json());
 
-// CORS configuration with preflight support
-const corsOptions = {
-  origin: "https://cognig.onrender.com",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Accept"]
-};
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.use(
+  cors({
+    origin: "https://cognig.onrender.com",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+  })
+);
 
-// Routes
 app.use("/auth", authRoutes);
 app.use("/api", chatRoutes);
 
-// Database
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected with Database!"))
   .catch((err) => console.error("DB connection error:", err));
 
-// Server start
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
