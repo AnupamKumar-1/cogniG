@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 8080;
 app.set('trust proxy', 1);
 app.use(express.json());
 
+// CORS configuration with preflight support
 const corsOptions = {
   origin: "https://cognig.onrender.com",
   credentials: true,
@@ -23,14 +24,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-
+// Routes
 app.use("/auth", authRoutes);
+app.use("/api", chatRoutes);
 
-app.use("/api", cors(corsOptions), chatRoutes);
-
+// Database
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected with Database!"))
   .catch((err) => console.error("DB connection error:", err));
 
+// Server start
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
