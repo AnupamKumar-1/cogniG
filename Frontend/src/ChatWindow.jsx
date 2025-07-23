@@ -14,7 +14,6 @@ function ChatWindow() {
     setPrevChats,
     setNewChat
   } = useContext(MyContext);
-
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -22,42 +21,33 @@ function ChatWindow() {
     setLoading(true);
     setNewChat(false);
 
-    const options = {
+    const response = await fetch("https://cognig-backend.onrender.com/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({
-        message: prompt,
-        threadId: currThreadId
-      })
-    };
+      body: JSON.stringify({ message: prompt, threadId: currThreadId })
+    });
 
+    const clone = response.clone();
+    let data;
     try {
-      const response = await fetch("https://cognig-backend.onrender.com/api/chat", options);
-
-      let data;
-      try {
-        data = await response.json();
-      } catch (parseErr) {
-        console.error("Failed to parse JSON:", parseErr);
-        const text = await response.text();
-        console.error("Raw response:", text);
-        setLoading(false);
-        return;
-      }
-
-      if (!response.ok) {
-        console.error("Server error:", data);
-        setLoading(false);
-        return;
-      }
-
-      setReply(data.reply);
-    } catch (err) {
-      console.error("Network error on /api/chat:", err);
-    } finally {
+      data = await response.json();
+    } catch (parseErr) {
+      console.error("Failed to parse JSON:", parseErr);
+      const text = await clone.text();
+      console.error("Raw response:", text);
       setLoading(false);
+      return;
     }
+
+    if (!response.ok) {
+      console.error("Server error:", data);
+      setLoading(false);
+      return;
+    }
+
+    setReply(data.reply);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -79,11 +69,8 @@ function ChatWindow() {
         method: "GET",
         credentials: "include"
       });
-      if (res.ok) {
-        window.location.href = "/";
-      } else {
-        console.error("Logout failed:", await res.text());
-      }
+      if (res.ok) window.location.href = "/";
+      else console.error("Logout failed:", await res.text());
     } catch (err) {
       console.error("Network error on logout:", err);
     }
