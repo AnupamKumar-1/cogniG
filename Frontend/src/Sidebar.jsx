@@ -16,17 +16,30 @@ function Sidebar() {
   } = useContext(MyContext);
 
   const getAllThreads = async () => {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      console.error("No JWT found, please log in again.");
+      return;
+    }
+
     try {
-      const response = await fetch("https://cognig-backend.onrender.com/api/thread", {
-        credentials: "include"
-      });
+      const response = await fetch(
+        "https://cognig-backend.onrender.com/api/thread",
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
+      );
       if (!response.ok) {
         const err = await response.json();
         console.error("Failed to load threads:", err);
         return;
       }
       const threads = await response.json();
-      setAllThreads(threads.map(t => ({ threadId: t.threadId, title: t.title })));
+      setAllThreads(
+        threads.map(t => ({ threadId: t.threadId, title: t.title }))
+      );
     } catch (err) {
       console.error("Network error loading threads:", err);
     }
@@ -44,12 +57,22 @@ function Sidebar() {
     setPrevChats([]);
   };
 
-  const changeThread = async newThreadId => {
+  const changeThread = async (newThreadId) => {
     setCurrThreadId(newThreadId);
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      console.error("No JWT found, please log in again.");
+      return;
+    }
+
     try {
       const response = await fetch(
         `https://cognig-backend.onrender.com/api/thread/${newThreadId}`,
-        { credentials: "include" }
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
       );
       if (!response.ok) {
         const err = await response.json();
@@ -65,11 +88,22 @@ function Sidebar() {
     }
   };
 
-  const deleteThread = async threadId => {
+  const deleteThread = async (threadId) => {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      console.error("No JWT found, please log in again.");
+      return;
+    }
+
     try {
       const response = await fetch(
         `https://cognig-backend.onrender.com/api/thread/${threadId}`,
-        { method: "DELETE", credentials: "include" }
+        {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
       );
       if (!response.ok) {
         const err = await response.json();
@@ -98,12 +132,14 @@ function Sidebar() {
           <li
             key={idx}
             onClick={() => changeThread(thread.threadId)}
-            className={thread.threadId === currThreadId ? "highlighted" : ""}
+            className={
+              thread.threadId === currThreadId ? "highlighted" : ""
+            }
           >
             {thread.title}
             <i
               className="fa-solid fa-trash"
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
                 deleteThread(thread.threadId);
               }}

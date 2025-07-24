@@ -19,19 +19,31 @@ function App() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const loginFlag = params.get('login');
-    if (loginFlag === 'success') {
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('jwt', token);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) {
+      setShowModal(true);
+      return;
+    }
+
     fetch('https://cognig-backend.onrender.com/auth/me', {
-      credentials: 'include',
-      cache: 'no-store',
+      headers: {
+        'Authorization': `Bearer ${jwt}`
+      },
+      cache: 'no-store'
     })
       .then(res => res.json())
       .then(data => {
-        if (data.user) setUser(data.user);
-        else setShowModal(true);
+        if (data.user) {
+          setUser(data.user);
+        } else {
+          setShowModal(true);
+        }
       })
       .catch(() => setShowModal(true));
   }, []);

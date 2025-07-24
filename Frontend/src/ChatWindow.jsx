@@ -21,33 +21,49 @@ function ChatWindow() {
     setLoading(true);
     setNewChat(false);
 
-    const response = await fetch("https://cognig-backend.onrender.com/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ message: prompt, threadId: currThreadId })
-    });
+    const token = localStorage.getItem('jwt');
+    if (!token) {
+      console.error('No JWT found, please log in again.');
+      setLoading(false);
+      return;
+    }
 
-    const clone = response.clone();
-    let data;
     try {
-      data = await response.json();
-    } catch (parseErr) {
-      console.error("Failed to parse JSON:", parseErr);
-      const text = await clone.text();
-      console.error("Raw response:", text);
-      setLoading(false);
-      return;
-    }
+      const response = await fetch(
+        "https://cognig-backend.onrender.com/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ message: prompt, threadId: currThreadId })
+        }
+      );
 
-    if (!response.ok) {
-      console.error("Server error:", data);
-      setLoading(false);
-      return;
-    }
+      const clone = response.clone();
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseErr) {
+        console.error("Failed to parse JSON:", parseErr);
+        const text = await clone.text();
+        console.error("Raw response:", text);
+        setLoading(false);
+        return;
+      }
 
-    setReply(data.reply);
-    setLoading(false);
+      if (!response.ok) {
+        console.error("Server error:", data);
+        setLoading(false);
+        return;
+      }
+
+      setReply(data.reply);
+    } catch (err) {
+      console.error("Network error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -63,18 +79,10 @@ function ChatWindow() {
 
   const handleProfileClick = () => setIsOpen(open => !open);
 
-  async function handleLogout() {
-    try {
-      const res = await fetch("https://cognig-backend.onrender.com/auth/logout", {
-        method: "GET",
-        credentials: "include"
-      });
-      if (res.ok) window.location.href = "/";
-      else console.error("Logout failed:", await res.text());
-    } catch (err) {
-      console.error("Network error on logout:", err);
-    }
-  }
+  const handleLogout = () => {
+    localStorage.removeItem('jwt');
+    window.location.href = '/';
+  };
 
   return (
     <div className="chatWindow">
@@ -97,7 +105,7 @@ function ChatWindow() {
 
       <Chat />
 
-      <ScaleLoader color="#fff" loading={loading} />
+      <ScaleLoader loading={loading} />
 
       <div className="chatInput">
         <div className="inputBox">
