@@ -1,5 +1,5 @@
 import "./Sidebar.css";
-import logo from "../assets/blacklogo.svg";
+import logo from "./assets/blacklogo.svg";
 import { useContext, useEffect } from "react";
 import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
