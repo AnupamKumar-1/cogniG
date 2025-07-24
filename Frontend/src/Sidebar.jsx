@@ -1,4 +1,5 @@
 import "./Sidebar.css";
+import logo from "../assets/blacklogo.svg";
 import { useContext, useEffect } from "react";
 import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
@@ -121,7 +122,7 @@ function Sidebar() {
   return (
     <section className="sidebar">
       <button onClick={createNewChat}>
-        <img src="/assets/blacklogo.svg" alt="gpt logo" className="logo" />
+       <img src={logo} alt="cogniG logo" className="logo" />
         <span>
           <i className="fa-solid fa-pen-to-square"></i>
         </span>
