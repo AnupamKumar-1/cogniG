@@ -42,7 +42,7 @@ sequenceDiagram
   participant M as MongoDB
 
   U->>F: enter prompt
-  F->>B: F->>B: POST /api/chat {prompt, sessionId}
+  F->>B: POST /api/chat {prompt, sessionId}
   B->>G: send prompt to Gemini
   G-->>B: stream response chunks
   B->>M: save message to MongoDB
