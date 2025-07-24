@@ -1,9 +1,3 @@
-[![React](https://img.shields.io/badge/React-18.2.0-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
-[![Express](https://img.shields.io/badge/Express-4.18.2-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![npm](https://img.shields.io/badge/npm-9.5.1-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-6.0.5-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-Alpha-4285F4?logo=google&logoColor=white)](https://cloud.google.com/gen-ai)
-
 ## cogniG
 
 A full‑stack chat application built with the MERN stack and powered by Google’s Gemini AI. cogniG provides a real‑time chat interface with streaming AI responses and persistent conversation history.
@@ -62,21 +56,6 @@ sequenceDiagram
 
 ---
 
-## Data Model
-
-```js
-// Message document
-{
-  _id,
-  sessionId: String,
-  role: 'user' | 'assistant',
-  text: String,
-  timestamp: Date
-}
-```
-
----
-
 ## Getting Started
 
 1. **Clone repo**
@@ -86,14 +65,7 @@ sequenceDiagram
    cd cogniG
    ```
 
-2. **Set up env**
-
-   ```bash
-   cp .env.example .env
-   # fill in MONGODB_URI and GEMINI_API_KEY
-   ```
-
-3. **Install & run**
+2. **Install & run**
 
    * **Backend**
 
