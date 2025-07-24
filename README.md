@@ -1,3 +1,4 @@
+
 ## cogniG
 
 A full‑stack chat application built with the MERN stack and powered by Google’s Gemini AI. cogniG provides a real‑time chat interface with streaming AI responses and persistent conversation history.
@@ -28,15 +29,15 @@ flowchart LR
     B -->|Issue JWT| U
   end
 
-  U -->|HTTP POST /api/chat (JWT)| F[React Frontend]
-  F -->|HTTP POST /api/chat| B
+  U -->|HTTP POST /api/chat with JWT| F[React Frontend]
+  F -->|HTTP POST /api/chat| B[Express Backend]
   B -->|Gemini SDK| G[Google Gemini API]
   G -->|Response Stream| B
   B -->|CRUD| D[MongoDB]
   D --> B
   B -->|Stream| F
   F --> U
-```
+````
 
 *High‑level data and request flow.*
 
@@ -101,3 +102,6 @@ sequenceDiagram
 ## License
 
 MIT
+
+```
+
