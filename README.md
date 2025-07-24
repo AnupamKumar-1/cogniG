@@ -8,12 +8,13 @@ A fullâ€‘stack chat application built with the MERN stack and powered by Googleâ
 
 ## Tech Stack
 
-| Layer    | Technology        |
-| -------- | ----------------- |
-| Frontend | React             |
-| Backend  | Node.js, Express  |
-| Database | MongoDB           |
-| AI       | Google Gemini API |
+| Layer    | Technology         |
+| -------- | ------------------ |
+| Frontend | React              |
+| Backend  | Node.js, Express   |
+| Database | MongoDB            |
+| AI       | Google Gemini API  |
+| Auth     | GitHub OAuth       |
 
 ---
 
@@ -21,12 +22,20 @@ A fullâ€‘stack chat application built with the MERN stack and powered by Googleâ
 
 ```mermaid
 flowchart LR
-  A[React Frontend] -->|HTTP POST /api/chat| B[Express Backend]
-  B -->|Gemini SDK| C[Google Gemini API]
-  C -->|Response Stream| B
+  subgraph Auth["Authentication"]
+    U[User Browser] -->|Login w/ GitHub| GH[GitHub OAuth]
+    GH -->|OAuth Callback| B[Express Backend]
+    B -->|Issue JWT| U
+  end
+
+  U -->|HTTP POST /api/chat (JWT)| F[React Frontend]
+  F -->|HTTP POST /api/chat| B
+  B -->|Gemini SDK| G[Google Gemini API]
+  G -->|Response Stream| B
   B -->|CRUD| D[MongoDB]
   D --> B
-  B -->|Stream| A
+  B -->|Stream| F
+  F --> U
 ```
 
 *Highâ€‘level data and request flow.*
@@ -38,16 +47,21 @@ flowchart LR
 ```mermaid
 sequenceDiagram
   participant U as User
+  participant GH as GitHub
   participant F as Frontend
   participant B as Backend
   participant G as Gemini
   participant M as MongoDB
 
-  U->>F: enter prompt
-  F->>B: POST /api/chat {prompt, sessionId}
+  U->>GH: Login via GitHub
+  GH-->>B: OAuth code
+  B->>GH: Exchange code for access token
+  B-->>U: Issue JWT
+  U->>F: Attach JWT
+  F->>B: POST /api/chat {prompt} + JWT
   B->>G: send prompt
-  G-->>B: stream response
-  B->>M: save messages
+  G-->>B: stream response chunks
+  B->>M: save message
   B-->>F: stream chunks
   F-->>U: display messages
 ```
