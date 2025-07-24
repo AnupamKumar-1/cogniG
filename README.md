@@ -37,7 +37,7 @@ flowchart LR
   D --> B
   B -->|Stream| F
   F --> U
-````
+```
 
 *High‑level data and request flow.*
 
