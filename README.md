@@ -1,9 +1,8 @@
-[![Build Status](https://github.com/your-org/cogniG/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/cogniG/actions)
-[![npm version](https://img.shields.io/npm/v/cognig.svg)](https://www.npmjs.com/package/cognig)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
 [![Express](https://img.shields.io/badge/Express-4.18.2-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![GitHub OAuth](https://img.shields.io/badge/Auth-GitHub_OAuth-181717?logo=github&logoColor=white)](https://docs.github.com/en/developers/apps/building-oauth-apps)
+[![npm](https://img.shields.io/badge/npm-9.5.1-CB3837?logo=npm&logoColor=white)](https://www.npmjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.0.5-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-Alpha-4285F4?logo=google&logoColor=white)](https://cloud.google.com/gen-ai)
 
 ## cogniG
 
