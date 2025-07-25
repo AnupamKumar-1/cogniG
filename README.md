@@ -3,7 +3,7 @@
 
 A full‑stack chat application built with the MERN stack and powered by Google’s Gemini AI. cogniG provides a real‑time chat interface with streaming AI responses and persistent conversation history.
 
-🔗 [Live Demo](http://cognig.onrender.com)
+🔗 [Live Demo](https://cognig.onrender.com)
 
 ---
 
