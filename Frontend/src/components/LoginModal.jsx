@@ -9,7 +9,7 @@ export default function LoginModal({ isOpen, onClose }) {
       <div className="modal">
         <h2>Login to Start Exploring</h2>
         <a
-          href="https://cognig.onrender.com/auth/github"
+          href="https://cognig-backend.onrender.com/auth/github"
           className="btn btn-github"
         >
           <img
