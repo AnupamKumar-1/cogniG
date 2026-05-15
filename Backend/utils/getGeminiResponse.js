@@ -19,7 +19,7 @@ export default async function getGeminiResponse(messages) {
       }));
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.1-flash-lite",
+      model: "gemini-2.5-flash",
       contents,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
