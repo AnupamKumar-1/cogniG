@@ -217,3 +217,61 @@
   padding: 0.5rem 0;
   min-height: 24px;
 }
+
+.attach-btn {
+  position: absolute;
+  right: 46px;
+  bottom: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.attach-btn i {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.attach-btn:hover i { color: var(--text-secondary); }
+
+.attach-btn:disabled { cursor: not-allowed; }
+
+.attach-btn:disabled i { color: var(--text-muted); }
+
+.image-preview-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.image-preview {
+  height: 80px;
+  width: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-mid);
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+}

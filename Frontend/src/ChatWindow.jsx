@@ -1,7 +1,7 @@
 import "./ChatWindow.css";
 import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { ScaleLoader } from "react-spinners";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -16,6 +16,26 @@ function ChatWindow() {
 
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImage({ base64: reader.result.split(",")[1], mimeType: file.type });
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setImage(null);
+    setImagePreview(null);
+    fileInputRef.current.value = "";
+  };
 
   const getReply = async () => {
     if (!prompt.trim()) return;
@@ -31,7 +51,12 @@ function ChatWindow() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ message: prompt, threadId: currThreadId })
+        body: JSON.stringify({
+          message: prompt,
+          threadId: currThreadId,
+          imageBase64: image?.base64 || null,
+          imageMimeType: image?.mimeType || null,
+        })
       });
 
       const clone = response.clone();
@@ -47,6 +72,9 @@ function ChatWindow() {
 
       if (!response.ok) { setLoading(false); return; }
       setReply(data.reply);
+      setImage(null);
+      setImagePreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       console.error("Network error:", err);
     } finally {
@@ -109,6 +137,14 @@ function ChatWindow() {
 
       <div className="chat-footer">
         <div className="input-wrap">
+          {imagePreview && (
+            <div className="image-preview-wrap">
+              <img src={imagePreview} alt="preview" className="image-preview" />
+              <button className="remove-image-btn" onClick={removeImage}>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          )}
           <input
             className="chat-input"
             placeholder="Ask anything..."
@@ -116,6 +152,20 @@ function ChatWindow() {
             onChange={e => setPrompt(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && getReply()}
           />
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            style={{ display: "none" }}
+          />
+          <button
+            className="attach-btn"
+            onClick={() => fileInputRef.current.click()}
+            disabled={loading}
+          >
+            <i className="fa-solid fa-paperclip"></i>
+          </button>
           <button
             className="send-btn"
             onClick={getReply}
