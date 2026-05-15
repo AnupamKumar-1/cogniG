@@ -8,10 +8,15 @@ Be concise, clear, and friendly. Format responses with markdown when helpful.
 You can search the web for current information when needed.
 Always cite sources when using search results.
 When given an image, analyze it in detail.
-When asked to run code or solve math, use code execution to give accurate results.`;
+When asked to run code or solve math, use code execution to give accurate results.
+You support and can analyze code in Python, JavaScript, TypeScript, JSX, TSX, HTML, CSS, and more.`;
 
 export default async function getGeminiResponse(messages, imageBase64 = null, imageMimeType = null) {
   try {
+    if (imageBase64) {
+      imageBase64 = imageBase64.replace(/^data:[^;]+;base64,/, "");
+    }
+
     const filtered = messages
       .filter(msg => (msg.content && msg.content.trim()) || msg.hasImage)
       .slice(-20);
