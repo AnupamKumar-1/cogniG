@@ -7,13 +7,13 @@ export default defineConfig({
     proxy: {
       // Proxy /auth to backend
       '^/auth/.*': {
-        target: 'https://cognig-backend.onrender.com',
+        target: 'https://cognigbackend.onrender.com',
         changeOrigin: true,
         secure: false,
       },
       // Proxy /api to backend
       '^/api/.*': {
-        target: 'https://cognig-backend.onrender.com',
+        target: 'https://cognigbackend.onrender.com',
         changeOrigin: true,
         secure: false,
       }

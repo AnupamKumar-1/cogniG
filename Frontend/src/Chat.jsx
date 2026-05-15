@@ -1,74 +1,67 @@
 import "./Chat.css";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { MyContext } from "./MyContext";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 
 function Chat() {
-    const {newChat, prevChats, reply} = useContext(MyContext);
+    const { newChat, prevChats, reply } = useContext(MyContext);
     const [latestReply, setLatestReply] = useState(null);
+    const bottomRef = useRef(null);
 
     useEffect(() => {
-        if(reply === null) {
-            setLatestReply(null); //prevchat load
-            return;
-        }
+        if (reply === null) { setLatestReply(null); return; }
+        if (!prevChats?.length) return;
 
-        if(!prevChats?.length) return;
-
-        const content = reply.split(" "); //individual words
-
+        const words = reply.split(" ");
         let idx = 0;
         const interval = setInterval(() => {
-            setLatestReply(content.slice(0, idx+1).join(" "));
-
+            setLatestReply(words.slice(0, idx + 1).join(" "));
             idx++;
-            if(idx >= content.length) clearInterval(interval);
+            if (idx >= words.length) clearInterval(interval);
         }, 40);
 
         return () => clearInterval(interval);
+    }, [prevChats, reply]);
 
-    }, [prevChats, reply])
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [prevChats, latestReply]);
+
+    if (newChat && !prevChats?.length) {
+        return (
+            <div className="chat-empty">
+                <div className="empty-mark">cogniG</div>
+                <div className="empty-tagline">start a new conversation</div>
+            </div>
+        );
+    }
 
     return (
-        <>
-            {newChat && <h1>Start a New Chat!</h1>}
-            <div className="chats">
-                {
-                    prevChats?.slice(0, -1).map((chat, idx) => 
-                        <div className={chat.role === "user"? "userDiv" : "gptDiv"} key={idx}>
-                            {
-                                chat.role === "user"?
-                                <p className="userMessage">{chat.content}</p> : 
-                                <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{chat.content}</ReactMarkdown>
-                            }
-                        </div>
-                    )
-                }
+        <div className="chats">
+            {prevChats?.slice(0, -1).map((chat, idx) => (
+                <div className={chat.role === "user" ? "userDiv" : "gptDiv"} key={idx}>
+                    {chat.role === "user"
+                        ? <p className="userMessage">{chat.content}</p>
+                        : <div><ReactMarkdown rehypePlugins={[rehypeHighlight]}>{chat.content}</ReactMarkdown></div>
+                    }
+                </div>
+            ))}
 
-                {
-                    prevChats.length > 0  && (
-                        <>
-                            {
-                                latestReply === null ? (
-                                    <div className="gptDiv" key={"non-typing"} >
-                                    <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{prevChats[prevChats.length-1].content}</ReactMarkdown>
-                                </div>
-                                ) : (
-                                    <div className="gptDiv" key={"typing"} >
-                                     <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{latestReply}</ReactMarkdown>
-                                </div>
-                                )
+            {prevChats?.length > 0 && (
+                <div className="gptDiv">
+                    <div>
+                        <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                            {latestReply === null ? prevChats[prevChats.length - 1].content : latestReply}
+                        </ReactMarkdown>
+                    </div>
+                </div>
+            )}
 
-                            }
-                        </>
-                    )
-                }
-
-            </div>
-        </>
-    )
+            <div ref={bottomRef} />
+        </div>
+    );
 }
 
 export default Chat;

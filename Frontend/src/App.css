@@ -1,14 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-base:       #0e0e0f;
+  --bg-surface:    #161618;
+  --bg-elevated:   #1e1e21;
+  --bg-hover:      #26262a;
+  --border:        rgba(255,255,255,0.06);
+  --border-mid:    rgba(255,255,255,0.1);
+  --accent:        #e8b84b;
+  --accent-dim:    rgba(232,184,75,0.12);
+  --accent-glow:   rgba(232,184,75,0.25);
+  --text-primary:  #f0ede8;
+  --text-secondary:#8a8785;
+  --text-muted:    #4a4845;
+  --user-bubble:   #1e1e21;
+  --radius-sm:     6px;
+  --radius-md:     12px;
+  --radius-lg:     18px;
+  --font-mono:     'DM Mono', monospace;
+  --font-sans:     'DM Sans', sans-serif;
+  --sidebar-w:     260px;
+  --transition:    0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
 * {
-    color: #ececec;
-    font-family: Roboto, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-    margin: 0;
-    padding: 0;
+  background: var(--bg-base);
+  overflow: hidden;
 }
 
 .app {
-    background-color: #212121;
-    display: flex;
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-base);
 }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }

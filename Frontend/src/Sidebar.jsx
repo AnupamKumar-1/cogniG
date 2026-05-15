@@ -6,49 +6,28 @@ import { v1 as uuidv1 } from "uuid";
 
 function Sidebar() {
   const {
-    allThreads,
-    setAllThreads,
+    allThreads, setAllThreads,
     currThreadId,
-    setNewChat,
-    setPrompt,
-    setReply,
-    setCurrThreadId,
-    setPrevChats
+    setNewChat, setPrompt, setReply,
+    setCurrThreadId, setPrevChats
   } = useContext(MyContext);
 
   const getAllThreads = async () => {
     const token = localStorage.getItem("jwt");
-    if (!token) {
-      console.error("No JWT found, please log in again.");
-      return;
-    }
-
+    if (!token) return;
     try {
-      const response = await fetch(
-        "https://cognig-backend.onrender.com/api/thread",
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        }
-      );
-      if (!response.ok) {
-        const err = await response.json();
-        console.error("Failed to load threads:", err);
-        return;
-      }
+      const response = await fetch("https://cognig-backend.onrender.com/api/thread", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!response.ok) return;
       const threads = await response.json();
-      setAllThreads(
-        threads.map(t => ({ threadId: t.threadId, title: t.title }))
-      );
+      setAllThreads(threads.map(t => ({ threadId: t.threadId, title: t.title })));
     } catch (err) {
       console.error("Network error loading threads:", err);
     }
   };
 
-  useEffect(() => {
-    getAllThreads();
-  }, [currThreadId]);
+  useEffect(() => { getAllThreads(); }, [currThreadId]);
 
   const createNewChat = () => {
     setNewChat(true);
@@ -61,25 +40,12 @@ function Sidebar() {
   const changeThread = async (newThreadId) => {
     setCurrThreadId(newThreadId);
     const token = localStorage.getItem("jwt");
-    if (!token) {
-      console.error("No JWT found, please log in again.");
-      return;
-    }
-
+    if (!token) return;
     try {
-      const response = await fetch(
-        `https://cognig-backend.onrender.com/api/thread/${newThreadId}`,
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        }
-      );
-      if (!response.ok) {
-        const err = await response.json();
-        console.error("Failed to load chat:", err);
-        return;
-      }
+      const response = await fetch(`https://cognig-backend.onrender.com/api/thread/${newThreadId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!response.ok) return;
       const messages = await response.json();
       setPrevChats(messages);
       setNewChat(false);
@@ -91,26 +57,13 @@ function Sidebar() {
 
   const deleteThread = async (threadId) => {
     const token = localStorage.getItem("jwt");
-    if (!token) {
-      console.error("No JWT found, please log in again.");
-      return;
-    }
-
+    if (!token) return;
     try {
-      const response = await fetch(
-        `https://cognig-backend.onrender.com/api/thread/${threadId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        }
-      );
-      if (!response.ok) {
-        const err = await response.json();
-        console.error("Failed to delete thread:", err);
-        return;
-      }
+      const response = await fetch(`https://cognig-backend.onrender.com/api/thread/${threadId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (!response.ok) return;
       await response.json();
       setAllThreads(prev => prev.filter(t => t.threadId !== threadId));
       if (threadId === currThreadId) createNewChat();
@@ -121,36 +74,46 @@ function Sidebar() {
 
   return (
     <section className="sidebar">
-      <button onClick={createNewChat}>
-       <img src={logo} alt="cogniG logo" className="logo" />
-        <span>
+      <div className="sidebar-header">
+        <div className="brand">
+          <img src={logo} alt="cogniG logo" className="brand-logo" />
+          <span className="brand-name">cogni<span>G</span></span>
+        </div>
+        <button className="new-chat-btn" onClick={createNewChat} title="New chat">
           <i className="fa-solid fa-pen-to-square"></i>
-        </span>
-      </button>
+        </button>
+      </div>
 
-      <ul className="history">
-        {allThreads?.map((thread, idx) => (
-          <li
-            key={idx}
-            onClick={() => changeThread(thread.threadId)}
-            className={
-              thread.threadId === currThreadId ? "highlighted" : ""
-            }
-          >
-            {thread.title}
-            <i
-              className="fa-solid fa-trash"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteThread(thread.threadId);
-              }}
-            ></i>
-          </li>
-        ))}
-      </ul>
+      <div className="history-section">
+        {allThreads?.length > 0 && (
+          <>
+            <div className="history-label">Recents</div>
+            <ul className="history-list">
+              {allThreads.map((thread, idx) => (
+                <li
+                  key={idx}
+                  onClick={() => changeThread(thread.threadId)}
+                  className={thread.threadId === currThreadId ? "highlighted" : ""}
+                >
+                  {thread.title}
+                  <i
+                    className="fa-solid fa-trash delete-btn"
+                    onClick={(e) => { e.stopPropagation(); deleteThread(thread.threadId); }}
+                  />
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
 
-      <div className="sign">
-        <p>Anupam Kr &hearts;</p>
+      <div className="sidebar-footer">
+        <div className="footer-user">
+          <div className="footer-avatar">
+            <i className="fa-solid fa-user"></i>
+          </div>
+          <span className="footer-name">Anupam Kr</span>
+        </div>
       </div>
     </section>
   );

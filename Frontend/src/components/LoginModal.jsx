@@ -1,4 +1,3 @@
-
 import React from "react";
 import "./LoginModal.css";
 
@@ -7,24 +6,22 @@ export default function LoginModal({ isOpen, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h2>Login to Start Exploring</h2>
+        <button className="modal-close" onClick={onClose}>
+          <i className="fa-solid fa-xmark"></i>
+        </button>
+
+        <div className="modal-logo">cogni<span>G</span></div>
+        <div className="modal-sub">sign in to continue</div>
+
         <a
           href="https://cognig-backend.onrender.com/auth/github"
-          className="btn btn-github"
+          className="btn-github"
         >
-          <img
-            src="/vite.svg"
-            alt="GitHub logo"
-            className="github-logo"
-          />
-          Login with GitHub
+          <i className="fa-brands fa-github github-icon"></i>
+          Continue with GitHub
         </a>
-        <button
-          className="modal-close"
-          onClick={onClose}
-        >
-          ×
-        </button>
+
+        <p className="modal-terms">by continuing you agree to our terms of service</p>
       </div>
     </div>
   );

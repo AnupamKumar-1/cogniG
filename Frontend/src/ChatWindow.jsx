@@ -6,58 +6,44 @@ import { ScaleLoader } from "react-spinners";
 
 function ChatWindow() {
   const {
-    prompt,
-    setPrompt,
-    reply,
-    setReply,
+    prompt, setPrompt,
+    reply, setReply,
     currThreadId,
-    setPrevChats,
-    setNewChat
+    setPrevChats, setNewChat
   } = useContext(MyContext);
+
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const getReply = async () => {
+    if (!prompt.trim()) return;
     setLoading(true);
     setNewChat(false);
-
     const token = localStorage.getItem('jwt');
-    if (!token) {
-      console.error('No JWT found, please log in again.');
-      setLoading(false);
-      return;
-    }
+    if (!token) { setLoading(false); return; }
 
     try {
-      const response = await fetch(
-        "https://cognig-backend.onrender.com/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ message: prompt, threadId: currThreadId })
-        }
-      );
+      const response = await fetch("https://cognig-backend.onrender.com/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ message: prompt, threadId: currThreadId })
+      });
 
       const clone = response.clone();
       let data;
       try {
         data = await response.json();
-      } catch (parseErr) {
-        console.error("Failed to parse JSON:", parseErr);
+      } catch {
         const text = await clone.text();
         console.error("Raw response:", text);
         setLoading(false);
         return;
       }
 
-      if (!response.ok) {
-        console.error("Server error:", data);
-        setLoading(false);
-        return;
-      }
-
+      if (!response.ok) { setLoading(false); return; }
       setReply(data.reply);
     } catch (err) {
       console.error("Network error:", err);
@@ -77,8 +63,6 @@ function ChatWindow() {
     }
   }, [reply]);
 
-  const handleProfileClick = () => setIsOpen(open => !open);
-
   const handleLogout = () => {
     localStorage.removeItem('jwt');
     window.location.href = '/';
@@ -87,41 +71,58 @@ function ChatWindow() {
   return (
     <div className="chatWindow">
       <div className="navbar">
-        <span>cogniG <i className="fa-solid fa-chevron-down"></i></span>
-        <div className="userIconDiv" onClick={handleProfileClick}>
-          <span className="userIcon"><i className="fa-solid fa-user"></i></span>
+        <div className="navbar-model">
+          <span>cogniG</span>
+          <i className="fa-solid fa-chevron-down"></i>
+        </div>
+        <div className="navbar-actions">
+          <div className="user-btn" onClick={() => setIsOpen(o => !o)}>
+            <i className="fa-solid fa-user"></i>
+          </div>
         </div>
       </div>
 
       {isOpen && (
         <div className="dropDown">
-          <div className="dropDownItem"><i className="fa-solid fa-gear"></i> Settings</div>
-          <div className="dropDownItem"><i className="fa-solid fa-cloud-arrow-up"></i> Upgrade plan</div>
-          <div className="dropDownItem" onClick={handleLogout}>
+          <div className="dropDownItem">
+            <i className="fa-solid fa-gear"></i> Settings
+          </div>
+          <div className="dropDownItem">
+            <i className="fa-solid fa-cloud-arrow-up"></i> Upgrade plan
+          </div>
+          <div className="dropdown-divider" />
+          <div className="dropDownItem danger" onClick={handleLogout}>
             <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
           </div>
         </div>
       )}
 
-      <Chat />
+      <div className="chat-body">
+        <Chat />
+      </div>
 
-      <ScaleLoader loading={loading} />
+      <div className="loader-wrap">
+        <ScaleLoader loading={loading} color="var(--accent)" height={14} width={2} radius={2} margin={2} />
+      </div>
 
-      <div className="chatInput">
-        <div className="inputBox">
+      <div className="chat-footer">
+        <div className="input-wrap">
           <input
-            placeholder="Ask anything"
+            className="chat-input"
+            placeholder="Ask anything..."
             value={prompt}
             onChange={e => setPrompt(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && getReply()}
+            onKeyDown={e => e.key === 'Enter' && !e.shiftKey && getReply()}
           />
-          <div id="submit" onClick={getReply}>
-            <i className="fa-solid fa-paper-plane"></i>
-          </div>
+          <button
+            className="send-btn"
+            onClick={getReply}
+            disabled={loading || !prompt.trim()}
+          >
+            <i className="fa-solid fa-arrow-up"></i>
+          </button>
         </div>
-        <p className="info">
-          cogniG can make mistakes. Check important info. See Cookie Preferences.
-        </p>
+        <p className="footer-hint">cogniG can make mistakes — verify important information.</p>
       </div>
     </div>
   );
