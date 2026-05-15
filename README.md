@@ -79,7 +79,7 @@ flowchart LR
 
   U -->|Bearer JWT| B
   B -->|Mongoose| D[MongoDB]
-  B -->|@google/genai SDK| G[gemini-2.5-flash]
+  B -->|google/genai SDK| G[gemini-2.5-flash]
   G --> S[Google Search Grounding]
   G --> C[Code Execution Tool]
   B -->|JSON reply| F[React Frontend]
