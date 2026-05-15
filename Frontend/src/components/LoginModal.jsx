@@ -7,9 +7,6 @@ export default function LoginModal({ isOpen, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <button className="modal-close" onClick={onClose}>
-          <i className="fa-solid fa-xmark"></i>
-        </button>
 
         <div className="modal-logo">
           cogni<span>G</span>
