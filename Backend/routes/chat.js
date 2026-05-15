@@ -103,8 +103,8 @@ router.post(
         thread.messages.push({ role: "user", content: message });
       }
 
-      // get AI reply
-      const assistantReply = await getGeminiResponse(message);
+      // get reply
+      const assistantReply = await getGeminiResponse(thread.messages);
       if (!assistantReply) {
         return res.status(502).json({
           error: "AI did not return a valid reply"
