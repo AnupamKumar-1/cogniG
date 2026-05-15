@@ -12,23 +12,29 @@ When asked to run code or solve math, use code execution to give accurate result
 
 export default async function getGeminiResponse(messages, imageBase64 = null, imageMimeType = null) {
   try {
-    const filtered = messages.filter(msg => msg.content?.trim()).slice(-20);
+    const filtered = messages
+      .filter(msg => (msg.content && msg.content.trim()) || msg.hasImage)
+      .slice(-20);
 
     const contents = filtered.map((msg, idx) => {
-      if (idx === filtered.length - 1 && imageBase64 && msg.role === "user") {
-        return {
-          role: "user",
-          parts: [
-            { inlineData: { mimeType: imageMimeType, data: imageBase64 } },
-            { text: msg.content.trim() }
-          ]
-        };
+      const isLastMessage = idx === filtered.length - 1;
+      const parts = [];
+
+      if (isLastMessage && imageBase64 && imageMimeType) {
+        parts.push({ inlineData: { mimeType: imageMimeType, data: imageBase64 } });
       }
+
+      if (msg.content && msg.content.trim()) {
+        parts.push({ text: msg.content.trim() });
+      }
+
       return {
         role: msg.role === "assistant" ? "model" : "user",
-        parts: [{ text: msg.content.trim() }]
+        parts
       };
     });
+
+    if (contents.length === 0) return "Kuch message toh bhejo!";
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
