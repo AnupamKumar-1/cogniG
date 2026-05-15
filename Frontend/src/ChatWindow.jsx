@@ -44,6 +44,8 @@ function ChatWindow() {
     const token = localStorage.getItem('jwt');
     if (!token) { setLoading(false); return; }
 
+    const currentImagePreview = imagePreview;
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/chat`, {
         method: "POST",
@@ -71,7 +73,7 @@ function ChatWindow() {
       }
 
       if (!response.ok) { setLoading(false); return; }
-      setReply(data.reply);
+      setReply({ text: data.reply, image: currentImagePreview });
       setImage(null);
       setImagePreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -86,10 +88,11 @@ function ChatWindow() {
     if (prompt && reply) {
       setPrevChats(prev => [
         ...prev,
-        { role: "user", content: prompt },
-        { role: "assistant", content: reply }
+        { role: "user", content: prompt, image: reply.image },
+        { role: "assistant", content: reply.text }
       ]);
       setPrompt("");
+      setReply(null);
     }
   }, [reply]);
 
@@ -154,7 +157,7 @@ function ChatWindow() {
           />
           <input
             type="file"
-            accept="image/*"
+            accept="image/png,image/jpeg,image/webp,image/gif"
             ref={fileInputRef}
             onChange={handleImageChange}
             style={{ display: "none" }}
