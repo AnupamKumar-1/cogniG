@@ -4,10 +4,12 @@ import { useContext, useEffect } from "react";
 import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 function Sidebar() {
   const {
     allThreads, setAllThreads,
-    currThreadId,
+    currThreadId, user,
     setNewChat, setPrompt, setReply,
     setCurrThreadId, setPrevChats
   } = useContext(MyContext);
@@ -16,7 +18,7 @@ function Sidebar() {
     const token = localStorage.getItem("jwt");
     if (!token) return;
     try {
-      const response = await fetch("https://cognig-backend.onrender.com/api/thread", {
+      const response = await fetch(`${BACKEND_URL}/api/thread`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!response.ok) return;
@@ -42,7 +44,7 @@ function Sidebar() {
     const token = localStorage.getItem("jwt");
     if (!token) return;
     try {
-      const response = await fetch(`https://cognig-backend.onrender.com/api/thread/${newThreadId}`, {
+      const response = await fetch(`${BACKEND_URL}/api/thread/${newThreadId}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!response.ok) return;
@@ -59,12 +61,11 @@ function Sidebar() {
     const token = localStorage.getItem("jwt");
     if (!token) return;
     try {
-      const response = await fetch(`https://cognig-backend.onrender.com/api/thread/${threadId}`, {
+      const response = await fetch(`${BACKEND_URL}/api/thread/${threadId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!response.ok) return;
-      await response.json();
       setAllThreads(prev => prev.filter(t => t.threadId !== threadId));
       if (threadId === currThreadId) createNewChat();
     } catch (err) {
@@ -112,7 +113,7 @@ function Sidebar() {
           <div className="footer-avatar">
             <i className="fa-solid fa-user"></i>
           </div>
-          <span className="footer-name">Anupam Kr</span>
+          <span className="footer-name">{user?.username || 'Guest'}</span>
         </div>
       </div>
     </section>

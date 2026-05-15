@@ -6,6 +6,8 @@ import LoginModal from './components/LoginModal.jsx';
 import { useState, useEffect } from 'react';
 import { v1 as uuidv1 } from 'uuid';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 function App() {
   const [prompt, setPrompt] = useState('');
   const [reply, setReply] = useState(null);
@@ -13,7 +15,6 @@ function App() {
   const [prevChats, setPrevChats] = useState([]);
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
-
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -31,19 +32,14 @@ function App() {
       return;
     }
 
-    fetch('https://cognig-backend.onrender.com/auth/me', {
-      headers: {
-        'Authorization': `Bearer ${jwt}`
-      },
+    fetch(`${BACKEND_URL}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${jwt}` },
       cache: 'no-store'
     })
       .then(res => res.json())
       .then(data => {
-        if (data.user) {
-          setUser(data.user);
-        } else {
-          setShowModal(true);
-        }
+        if (data.user) setUser(data.user);
+        else setShowModal(true);
       })
       .catch(() => setShowModal(true));
   }, []);
@@ -54,16 +50,12 @@ function App() {
     currThreadId, setCurrThreadId,
     newChat, setNewChat,
     prevChats, setPrevChats,
-    allThreads, setAllThreads
+    allThreads, setAllThreads,
+    user
   };
 
   if (!user) {
-    return (
-      <LoginModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-      />
-    );
+    return <LoginModal isOpen={showModal} onClose={() => setShowModal(false)} />;
   }
 
   return (

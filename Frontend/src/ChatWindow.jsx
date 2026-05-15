@@ -4,6 +4,8 @@ import { MyContext } from "./MyContext.jsx";
 import { useContext, useState, useEffect } from "react";
 import { ScaleLoader } from "react-spinners";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 function ChatWindow() {
   const {
     prompt, setPrompt,
@@ -23,7 +25,7 @@ function ChatWindow() {
     if (!token) { setLoading(false); return; }
 
     try {
-      const response = await fetch("https://cognig-backend.onrender.com/api/chat", {
+      const response = await fetch(`${BACKEND_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
