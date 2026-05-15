@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 8080;
 configurePassport();
 app.use(passport.initialize());
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.use(
   cors({
